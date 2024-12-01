@@ -2,6 +2,8 @@ package com.example.shortener.services;
 
 import com.example.shortener.model.Redirection;
 import com.example.shortener.model.*;
+import com.example.shortener.repo.RedirectionRepo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,21 +11,19 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UrlShortenerService {
+    private final RedirectionRepo repo;
+    private final RandomKeyGen gen;
 
-    @Autowired
-    private RedirectionRepo repo;
-    @Autowired
-    private RandomKeyGen gen;
+    @Value("${shortKeySize:3}")
+    private Integer shortKeySize;
 
-    @Value("${shortKeySize}")
-    private Integer shortKeySize = 3;
+    @Value("${application.domain:localhost}")
+    private String appDomain;
 
-    @Value("${application.domain}")
-    private String appDomain = "localhost";
-
-    @Value("${application.protocol}")
-    private String protocol = "http";
+    @Value("${application.protocol:http}")
+    private String protocol;
 
     @Value("${server.port}")
     private String serverPort;
@@ -45,7 +45,7 @@ public class UrlShortenerService {
     }
 
     private String formatShortUrl(String tail) {
-        return protocol + "://" + appDomain + ":" + serverPort + "/" + tail;
+        return protocol + "://" + appDomain + ":" + serverPort + "/a/" + tail;
     }
 
     public Redirection resolve(String shortKey) throws RedirectionNotFoundException {
@@ -61,5 +61,11 @@ public class UrlShortenerService {
 
     public void deleteRedirection(long id, long userId) {
         repo.delete(id, userId);
+    }
+
+    public Redirection getRedirection(long id, long userId) {
+        return repo
+                .findById(id, userId)
+                .orElseThrow(() -> new RedirectionNotFoundException(Long.toString(id)));
     }
 }

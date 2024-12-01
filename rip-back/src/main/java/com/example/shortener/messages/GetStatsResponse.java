@@ -1,21 +1,8 @@
 package com.example.shortener.messages;
 
+import lombok.Data;
+
 import java.util.Date;
 
-public class GetStatsResponse {
-    private final Date creationDate;
-    private final long usageCount;
-
-    public GetStatsResponse(Date creationDate, long usageCount) {
-        this.creationDate = creationDate;
-        this.usageCount = usageCount;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public long getUsageCount() {
-        return usageCount;
-    }
+public record GetStatsResponse(Date creationDate, long usageCount) {
 }

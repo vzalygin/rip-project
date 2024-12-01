@@ -53,7 +53,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
     
                 UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-    
+
                 // if token is valid configure Spring Security to manually set
                 // authentication
                 if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
@@ -70,9 +70,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
             }
             chain.doFilter(request, response);
-        } catch (MalformedJwtException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        } catch (ExpiredJwtException e) {
+        } catch (MalformedJwtException | ExpiredJwtException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
