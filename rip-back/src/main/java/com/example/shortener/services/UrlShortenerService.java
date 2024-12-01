@@ -1,9 +1,9 @@
 package com.example.shortener.services;
 
+import com.example.shortener.model.Redirection;
 import com.example.shortener.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,9 +19,6 @@ public class UrlShortenerService {
     @Value("${shortKeySize}")
     private Integer shortKeySize = 3;
 
-    @Value("${adminKeySize}")
-    private Integer adminKeySize = 10;
-
     @Value("${application.domain}")
     private String appDomain = "localhost";
 
@@ -34,18 +31,17 @@ public class UrlShortenerService {
     @Autowired
     UrlValidator validator;
 
-    public Pair<String, String> shorten(String longUrl) {
+    public String shorten(String longUrl, long userId) {
         String validationError = validator.validateAndGetError(longUrl);
         if (validationError != null) {
             throw new InvalidUrlException(validationError);
         }
         String shortKey = gen.generateKey(shortKeySize);
-        String secretKey = gen.generateKey(adminKeySize);
 
-        Redirection redirection = new Redirection(longUrl, shortKey, secretKey);
+        var redirection = new Redirection(longUrl, shortKey, userId);
         repo.save(redirection);
 
-        return Pair.of(formatShortUrl(shortKey), secretKey);
+        return formatShortUrl(shortKey);
     }
 
     private String formatShortUrl(String tail) {
@@ -55,7 +51,7 @@ public class UrlShortenerService {
     public Redirection resolve(String shortKey) throws RedirectionNotFoundException {
         Optional<Redirection> redirectionO = repo.findByShortKey(shortKey);
         if (redirectionO.isPresent()) {
-            Redirection redirection = redirectionO.get();
+            var redirection = redirectionO.get();
             redirection.incrementUsageCount();
             repo.save(redirection);
             return redirection;
@@ -63,15 +59,7 @@ public class UrlShortenerService {
         throw new RedirectionNotFoundException(shortKey);
     }
 
-    public Redirection findBySecretKey(String secretKey) {
-        Optional<Redirection> redirectionO = repo.findBySecretKey(secretKey);
-        if (redirectionO.isPresent()) {
-            return redirectionO.get();
-        }
-        throw new RedirectionNotFoundException(secretKey);
-    }
-
-    public void deleteRedirection(String secretKey) {
-        repo.delete(findBySecretKey(secretKey));
+    public void deleteRedirection(long id, long userId) {
+        repo.delete(id, userId);
     }
 }

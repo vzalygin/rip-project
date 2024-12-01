@@ -1,32 +1,32 @@
 package com.example.shortener.controllers;
 
-import com.example.shortener.model.Redirection;
-import com.example.shortener.model.RedirectionNotFoundException;
+import com.example.shortener.messages.CreateRedirectRequest;
+import com.example.shortener.messages.CreateRedirectResponse;
 import com.example.shortener.services.UrlShortenerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.AllArgsConstructor;
+import org.springframework.data.util.Pair;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
-@Controller
+@RestController
+@AllArgsConstructor
 public class RedirectController extends BaseController {
 
-    @Autowired
-    UrlShortenerService shortener;
+    private final UrlShortenerService shortener;
+
+    @RequestMapping(value="/make-shorter", method = RequestMethod.POST)
+    public CreateRedirectResponse createRedirect(
+            @RequestBody CreateRedirectRequest request
+    ) {
+        Pair<String, String> shortUrlAndSecret = shortener.shorten(request.getLongUrl());
+        return new CreateRedirectResponse(shortUrlAndSecret.getFirst(), shortUrlAndSecret.getSecond());
+    }
 
     @RequestMapping("/{shortKey}")
     public void doRedirect(@PathVariable String shortKey, HttpServletResponse response) {
-        Redirection redirection = shortener.resolve(shortKey);
+        var redirection = shortener.resolve(shortKey);
         response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         response.setHeader("Location", redirection.getLongUrl());
     }
-
-
 }
