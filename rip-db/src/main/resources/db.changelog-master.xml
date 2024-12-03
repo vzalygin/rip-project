@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="developer">
+        <sql>
+            CREATE TABLE users (
+                id INTEGER AUTO_INCREMENT PRIMARY KEY,
+                login VARCHAR(255) UNIQUE NOT NULL,
+                passwordHash VARCHAR(255) NOT NULL
+            );
+
+            CREATE TABLE redirections (
+                id INTEGER AUTO_INCREMENT PRIMARY KEY,
+                users_id INTEGER NOT NULL,
+                shortKey VARCHAR(255) UNIQUE NOT NULL,
+                longUrl VARCHAR(255) NOT NULL,
+                creationDate DATE NOT NULL,
+                usageCount INTEGER NOT NULL,
+                FOREIGN KEY (users_id) REFERENCES users (id)
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
