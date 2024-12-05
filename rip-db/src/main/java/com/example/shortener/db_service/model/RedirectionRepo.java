@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface RedirectionRepo extends CrudRepository<Redirection, String> {
-    Optional<Redirection> findBySecretKey(String secretKey);
 
     Optional<Redirection> findByShortKey(String shortKey);
 }
