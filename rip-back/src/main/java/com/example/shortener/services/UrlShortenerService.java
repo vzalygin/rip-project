@@ -1,6 +1,7 @@
 package com.example.shortener.services;
 
 import com.example.shortener.messages.CreateRedirectResponse;
+import com.example.shortener.messages.GetStatsResponse;
 import com.example.shortener.model.InvalidUrlException;
 import com.example.shortener.model.Redirection;
 import com.example.shortener.model.RedirectionNotFoundException;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,9 +58,22 @@ public class UrlShortenerService {
         repo.delete(id, userId);
     }
 
-    public Redirection getRedirection(long id, long userId) {
+    public GetStatsResponse getRedirection(long id, long userId) {
         return repo
                 .findById(id, userId)
+                .map(redirection -> new GetStatsResponse(
+                        redirection.getId(),
+                        redirection.getCreationDate().toInstant().toString(),
+                        redirection.getUsageCount()
+                ))
                 .orElseThrow(() -> new RedirectionNotFoundException(Long.toString(id)));
+    }
+
+    public List<GetStatsResponse> getAllUserRedirections(long userId) {
+        return repo.findAllByUserId(userId).stream().map(redirection -> new GetStatsResponse(
+                redirection.getId(),
+                redirection.getCreationDate().toInstant().toString(),
+                redirection.getUsageCount()
+        )).toList();
     }
 }

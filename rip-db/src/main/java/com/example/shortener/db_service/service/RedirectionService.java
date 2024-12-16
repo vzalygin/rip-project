@@ -8,6 +8,7 @@ import com.example.shortener.db_service.repo.RedirectionRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,5 +35,9 @@ public class RedirectionService {
         redirectionToDelete.setId(id);
         redirectionToDelete.setUser(user);
         redirectionRepo.delete(redirectionToDelete);
+    }
+
+    public List<RedirectionDTO> getRedirectionsByUserId(long userId) {
+        return redirectionRepo.findAllByUserId(userId).stream().map(RedirectionDTO::fromEntity).toList();
     }
 }

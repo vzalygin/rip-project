@@ -6,6 +6,7 @@ import com.example.shortener.db_service.service.RedirectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,6 +20,13 @@ public class RedirectionController {
             @RequestParam("shortKey") String shortKey
     ) {
         return redirectionService.findRedirectionByShortKey(shortKey);
+    }
+
+    @GetMapping("/all")
+    public List<RedirectionDTO> findAllByUserId(
+            @RequestParam("userId") long userId
+    ) {
+        return redirectionService.getRedirectionsByUserId(userId);
     }
 
     @GetMapping

@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 @Repository
@@ -57,5 +55,20 @@ public class RedirectionRepo {
             return Optional.empty();
         }
 
+    }
+
+    public List<Redirection> findAllByUserId(long userId) {
+        try {
+            final var response = restTemplate.getForEntity(
+                    String.format("%s/all?userId={userId}", url),
+                    Redirection[].class,
+                    Map.of(
+                            "userId", userId
+                    )
+            );
+            return Arrays.stream(Objects.requireNonNull(response.getBody())).toList();
+        } catch (RestClientException e) {
+            return List.of();
+        }
     }
 }

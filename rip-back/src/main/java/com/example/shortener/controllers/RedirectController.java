@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/redirection")
 @AllArgsConstructor
@@ -32,8 +34,15 @@ public class RedirectController {
             @PathVariable long id,
             @AuthenticationPrincipal UserDetails1 userDetails
     ) {
-        var redirection = shortener.getRedirection(id, userDetails.getUserId());
-        return new GetStatsResponse(redirection.getCreationDate().toInstant().toString(), redirection.getUsageCount());
+        return shortener.getRedirection(id, userDetails.getUserId());
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "Получение информации по перенаправлениям пользователя", security = { @SecurityRequirement(name = "bearer-key") })
+    public List<GetStatsResponse> getStatsAll(
+            @AuthenticationPrincipal UserDetails1 userDetails
+    ) {
+        return shortener.getAllUserRedirections(userDetails.getUserId());
     }
 
     @DeleteMapping("/{id}")

@@ -1,4 +1,4 @@
 package com.example.shortener.messages;
 
-public record GetStatsResponse(String creationDate, long usageCount) {
+public record GetStatsResponse(long id, String creationDate, long usageCount) {
 }
