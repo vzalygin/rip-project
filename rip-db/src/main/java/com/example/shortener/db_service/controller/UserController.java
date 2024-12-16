@@ -1,6 +1,7 @@
 package com.example.shortener.db_service.controller;
 
 
+import com.example.shortener.db_service.dto.UserDTO;
 import com.example.shortener.db_service.model.User;
 import com.example.shortener.db_service.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -8,18 +9,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@RestController("/user")
+@RestController
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/")
-    public Optional<User> getUserById(@RequestParam("username") String username) {
-        return userService.getUserByUsername(username);
+    @GetMapping("/user")
+    public Optional<UserDTO> getUserById(@RequestParam String username) {
+        return userService.getUserByUsername(username)
+                .map(UserDTO::fromEntity);
     }
 
-    @PostMapping("/")
-    public User saveUser(@RequestBody User user) {
+    @PostMapping("/user")
+    public User saveUser(@RequestBody UserDTO user) {
         return userService.save(user);
     }
 }

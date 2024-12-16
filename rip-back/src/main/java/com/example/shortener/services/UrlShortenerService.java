@@ -15,21 +15,13 @@ import java.util.Optional;
 public class UrlShortenerService {
     private final RedirectionRepo repo;
     private final RandomKeyGen gen;
+    private final UrlValidator validator;
 
-    @Value("${shortKeySize:3}")
+    @Value("${application.short-key-size}")
     private Integer shortKeySize;
 
-    @Value("${application.domain:localhost}")
-    private String appDomain;
-
-    @Value("${application.protocol:http}")
-    private String protocol;
-
-    @Value("${server.port}")
-    private String serverPort;
-
-    @Autowired
-    UrlValidator validator;
+    @Value("${application.short-url-prefix}}")
+    private String shortUrlPrefix;
 
     public String shorten(String longUrl, long userId) {
         String validationError = validator.validateAndGetError(longUrl);
@@ -44,8 +36,8 @@ public class UrlShortenerService {
         return formatShortUrl(shortKey);
     }
 
-    private String formatShortUrl(String tail) {
-        return protocol + "://" + appDomain + ":" + serverPort + "/a/" + tail;
+    private String formatShortUrl(String key) {
+        return String.format("%s/%s", shortUrlPrefix, key);
     }
 
     public Redirection resolve(String shortKey) throws RedirectionNotFoundException {

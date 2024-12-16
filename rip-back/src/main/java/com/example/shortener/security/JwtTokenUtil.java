@@ -1,11 +1,15 @@
 package com.example.shortener.security;
 
 import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -14,13 +18,20 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+import javax.crypto.SecretKey;
+
 @Component
 public class JwtTokenUtil implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
-    @Value("${secret-token:123}")
-    private String secret;
+    private final SecretKey secretKey;
+
+    public JwtTokenUtil(@Value("${application.secret-seed:123}") Long secretSeed) throws NoSuchAlgorithmException {
+        var rand = SecureRandom.getInstance("SHA1PRNG");
+        rand.setSeed(secretSeed);
+        secretKey = Jwts.SIG.HS512.key().random(rand).build();
+    }
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -39,7 +50,11 @@ public class JwtTokenUtil implements Serializable {
     
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     //check if the token has expired
@@ -60,9 +75,9 @@ public class JwtTokenUtil implements Serializable {
     //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
     //   compaction of the JWT to a URL-safe string
     private String doGenerateToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
+        return Jwts.builder().claims(claims).subject(subject).issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .signWith(secretKey, Jwts.SIG.HS512).compact();
     }
 
     //validate token

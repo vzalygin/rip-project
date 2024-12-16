@@ -1,9 +1,9 @@
 package com.example.shortener.services;
 
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;

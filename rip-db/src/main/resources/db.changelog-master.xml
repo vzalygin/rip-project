@@ -7,18 +7,20 @@
             CREATE TABLE users (
                 id INTEGER AUTO_INCREMENT PRIMARY KEY,
                 username VARCHAR(255) UNIQUE NOT NULL,
-                passwordHash VARCHAR(255) NOT NULL
+                password_hash VARCHAR(255) NOT NULL
             );
 
             CREATE TABLE redirections (
                 id INTEGER AUTO_INCREMENT PRIMARY KEY,
                 users_id INTEGER NOT NULL,
-                shortKey VARCHAR(255) UNIQUE NOT NULL,
-                longUrl VARCHAR(255) NOT NULL,
-                creationDate DATE NOT NULL,
-                usageCount INTEGER NOT NULL,
+                short_key VARCHAR(255) UNIQUE NOT NULL,
+                long_url VARCHAR(255) NOT NULL,
+                creation_date DATE NOT NULL,
+                usage_count INTEGER NOT NULL,
                 FOREIGN KEY (users_id) REFERENCES users (id)
             );
+
+            CREATE SEQUENCE "USERS_SEQ" MINVALUE 1 INCREMENT BY 50;
         </sql>
     </changeSet>
 

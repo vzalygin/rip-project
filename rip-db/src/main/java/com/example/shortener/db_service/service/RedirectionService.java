@@ -1,5 +1,6 @@
 package com.example.shortener.db_service.service;
 
+import com.example.shortener.db_service.dto.RedirectionDTO;
 import com.example.shortener.db_service.model.Redirection;
 import com.example.shortener.db_service.model.User;
 import com.example.shortener.db_service.repo.RedirectionRepo;

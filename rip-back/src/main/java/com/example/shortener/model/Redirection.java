@@ -1,13 +1,16 @@
 package com.example.shortener.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
 @Data
-@NoArgsConstructor
+@JsonInclude(NON_NULL)
 public class Redirection {
     private Long id;
     private String shortKey;
