@@ -3,47 +3,41 @@ package com.example.shortener.controllers;
 import com.example.shortener.messages.CreateRedirectRequest;
 import com.example.shortener.messages.CreateRedirectResponse;
 import com.example.shortener.messages.GetStatsResponse;
-import com.example.shortener.model.Redirection;
 import com.example.shortener.security.UserDetails1;
 import com.example.shortener.services.UrlShortenerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
 @RestController
+@RequestMapping("/redirection")
 @AllArgsConstructor
-public class RedirectController extends BaseController {
-
+public class RedirectController {
     private final UrlShortenerService shortener;
 
-    @RequestMapping("/a/{shortKey}")
-    public void doRedirect(@PathVariable String shortKey, HttpServletResponse response) {
-        var redirection = shortener.resolve(shortKey);
-        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-        response.setHeader("Location", redirection.getLongUrl());
-    }
-
-    @PostMapping(value="redirection")
+    @PostMapping("/")
+    @Operation(summary = "Создание перенаправления", security = { @SecurityRequirement(name = "bearer-key") })
     public CreateRedirectResponse createRedirect(
             @RequestBody CreateRedirectRequest request,
             @AuthenticationPrincipal UserDetails1 userDetails
     ) {
-        var shortUrl = shortener.shorten(request.longUrl(), userDetails.getUserId());
-        return new CreateRedirectResponse(shortUrl);
+        return shortener.shorten(request.longUrl(), userDetails.getUserId());
     }
 
-    @GetMapping(value = "redirection/{id}")
+    @GetMapping("/{id}")
+    @Operation(summary = "Получение информации по перенаправлению", security = { @SecurityRequirement(name = "bearer-key") })
     public GetStatsResponse getStats(
             @PathVariable long id,
             @AuthenticationPrincipal UserDetails1 userDetails
     ) {
-        Redirection redirection = shortener.getRedirection(id, userDetails.getUserId());
-        return new GetStatsResponse(redirection.getCreationDate(), redirection.getUsageCount());
+        var redirection = shortener.getRedirection(id, userDetails.getUserId());
+        return new GetStatsResponse(redirection.getCreationDate().toInstant().toString(), redirection.getUsageCount());
     }
 
-    @DeleteMapping(value = "redirection/{id}")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Удаление перенаправления", security = { @SecurityRequirement(name = "bearer-key") })
     public void deleteRedirection(
             @PathVariable long id,
             @AuthenticationPrincipal UserDetails1 userDetails

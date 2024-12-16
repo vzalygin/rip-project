@@ -4,29 +4,25 @@ import com.example.shortener.messages.LoginResponse;
 import com.example.shortener.messages.AuthenticateUserRequest;
 import com.example.shortener.model.ModelException;
 import com.example.shortener.security.JwtTokenUtil;
-import com.example.shortener.security.JwtUserDetailsService;
 import com.example.shortener.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 @RestController
+@RequestMapping("/user")
 @RequiredArgsConstructor
-public class UserController extends BaseController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
-    private final JwtUserDetailsService userDetailsService;
+public class UserController {
     private final UserService userService;
 
-    @PostMapping("/user/register")
+    @PostMapping("/register")
+    @Operation(summary = "Регистрация нового пользователя")
     ResponseEntity<?> registerUser(@RequestBody AuthenticateUserRequest authenticateUserRequest) {
         var username = authenticateUserRequest.username();
         var password = authenticateUserRequest.password();
@@ -39,21 +35,10 @@ public class UserController extends BaseController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/user/login")
+    @PostMapping("/login")
+    @Operation(summary = "Получение токена авторизации для пользователя")
     LoginResponse login(@RequestBody AuthenticateUserRequest authenticationRequest) throws Exception {
-        authenticate(authenticationRequest.username(), authenticationRequest.password());
-        var userDetails = userDetailsService.loadUserByUsername(authenticationRequest.username());
-        var token = jwtTokenUtil.generateToken(userDetails);
+        var token = userService.authenticate(authenticationRequest.username(), authenticationRequest.password());
         return new LoginResponse(token);
-    }
-
-    private void authenticate(String username, String password) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new ModelException("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new ModelException("INVALID_CREDENTIALS", e);
-        }
     }
 }
