@@ -16,8 +16,7 @@ public class UserController {
 
     @GetMapping("/user")
     public Optional<UserDTO> getUserById(@RequestParam String username) {
-        return userService.getUserByUsername(username)
-                .map(UserDTO::fromEntity);
+        return userService.getUserByUsername(username);
     }
 
     @PostMapping("/user")

@@ -12,15 +12,16 @@
 
             CREATE TABLE redirections (
                 id INTEGER AUTO_INCREMENT PRIMARY KEY,
-                users_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
                 short_key VARCHAR(255) UNIQUE NOT NULL,
                 long_url VARCHAR(255) NOT NULL,
                 creation_date DATE NOT NULL,
                 usage_count INTEGER NOT NULL,
-                FOREIGN KEY (users_id) REFERENCES users (id)
+                FOREIGN KEY (user_id) REFERENCES users (id)
             );
 
             CREATE SEQUENCE "USERS_SEQ" MINVALUE 1 INCREMENT BY 50;
+            CREATE SEQUENCE "REDIRECTIONS_SEQ" MINVALUE 1 INCREMENT BY 50;
         </sql>
     </changeSet>
 

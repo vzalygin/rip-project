@@ -1,6 +1,7 @@
 package com.example.shortener.db_service.service;
 
 import com.example.shortener.db_service.dto.RedirectionDTO;
+import com.example.shortener.db_service.dto.UserDTO;
 import com.example.shortener.db_service.model.Redirection;
 import com.example.shortener.db_service.model.User;
 import com.example.shortener.db_service.repo.RedirectionRepo;
@@ -14,16 +15,16 @@ import java.util.Optional;
 public class RedirectionService {
     private final RedirectionRepo redirectionRepo;
 
-    public Optional<Redirection> findRedirectionByShortKey(String shortKey) {
-        return redirectionRepo.findByShortKey(shortKey);
+    public Optional<RedirectionDTO> findRedirectionByShortKey(String shortKey) {
+        return redirectionRepo.findByShortKey(shortKey).map(RedirectionDTO::fromEntity);
     }
 
-    public Optional<Redirection> getRedirection(long id, long userId) {
-        return redirectionRepo.findByIdAndUserId(id, userId);
+    public Optional<RedirectionDTO> getRedirection(long id, long userId) {
+        return redirectionRepo.findByIdAndUserId(id, userId).map(RedirectionDTO::fromEntity);
     }
 
-    public Redirection save(Redirection redirection) {
-        return redirectionRepo.save(redirection);
+    public RedirectionDTO save(RedirectionDTO redirection) {
+        return RedirectionDTO.fromEntity(redirectionRepo.save(redirection.toEntity()));
     }
 
     public void delete(long id, long userId) {

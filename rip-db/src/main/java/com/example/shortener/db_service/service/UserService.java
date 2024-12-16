@@ -21,7 +21,7 @@ public class UserService {
         return userRepo.save(userEntity);
     }
 
-    public Optional<User> getUserByUsername(String username) {
-        return userRepo.findByUsername(username);
+    public Optional<UserDTO> getUserByUsername(String username) {
+        return userRepo.findByUsername(username).map(UserDTO::fromEntity);
     }
 }

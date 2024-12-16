@@ -1,6 +1,7 @@
 package com.example.shortener.services;
 
 
+import com.example.shortener.model.InvalidUrlException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
@@ -26,10 +27,10 @@ public class UrlValidator {
             int responseCode = response.statusCode();
 
             if (responseCode >= HttpServletResponse.SC_BAD_REQUEST) {
-                return String.format("invalid response http code %d from url %s",responseCode, url);
+                throw new InvalidUrlException(String.format("invalid response from url = %s", url));
             }
-        } catch (IOException | URISyntaxException | InterruptedException e) {
-            return String.format("error occurred %s while sending request to %s", e, url);
+        } catch (IOException | URISyntaxException | InterruptedException | IllegalArgumentException e) {
+            throw new InvalidUrlException(String.format("invalid url = %s", url));
         }
 
         return null;
