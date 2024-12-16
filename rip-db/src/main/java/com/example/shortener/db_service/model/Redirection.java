@@ -1,19 +1,18 @@
 package com.example.shortener.db_service.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "redirections")
-@Data
 @NoArgsConstructor
+@Setter
+@Getter
 public class Redirection {
     @Id
     @GeneratedValue
@@ -25,5 +24,9 @@ public class Redirection {
     private String longUrl;
 
     private Date creationDate;
+
     private long usageCount;
+
+    @ManyToOne
+    private User user;
 }

@@ -6,7 +6,7 @@
         <sql>
             CREATE TABLE users (
                 id INTEGER AUTO_INCREMENT PRIMARY KEY,
-                login VARCHAR(255) UNIQUE NOT NULL,
+                username VARCHAR(255) UNIQUE NOT NULL,
                 passwordHash VARCHAR(255) NOT NULL
             );
 
