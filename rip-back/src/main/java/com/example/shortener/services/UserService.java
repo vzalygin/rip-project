@@ -3,11 +3,8 @@ package com.example.shortener.services;
 import com.example.shortener.model.ModelException;
 import com.example.shortener.model.User;
 import com.example.shortener.model.UserAlreadyExistsException;
-import com.example.shortener.model.UserNotFoundException;
 import com.example.shortener.repo.UserRepo;
 import com.example.shortener.security.JwtTokenUtil;
-import com.example.shortener.security.JwtUserDetailsService;
-import com.example.shortener.security.UserDetails1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 @Service
 @RequiredArgsConstructor

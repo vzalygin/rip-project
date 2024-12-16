@@ -3,15 +3,11 @@ package com.example.shortener.controllers;
 import com.example.shortener.model.ErrorObject;
 import com.example.shortener.model.ModelException;
 import com.example.shortener.model.RedirectionNotFoundException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

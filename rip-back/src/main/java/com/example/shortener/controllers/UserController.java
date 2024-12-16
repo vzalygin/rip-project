@@ -1,9 +1,8 @@
 package com.example.shortener.controllers;
 
-import com.example.shortener.messages.LoginResponse;
 import com.example.shortener.messages.AuthenticateUserRequest;
+import com.example.shortener.messages.LoginResponse;
 import com.example.shortener.model.ModelException;
-import com.example.shortener.security.JwtTokenUtil;
 import com.example.shortener.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
