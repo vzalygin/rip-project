@@ -63,6 +63,7 @@ public class UrlShortenerService {
                 .findById(id, userId)
                 .map(redirection -> new GetStatsResponse(
                         redirection.getId(),
+                        redirection.getShortKey(),
                         redirection.getCreationDate().toInstant().toString(),
                         redirection.getUsageCount()
                 ))
@@ -72,6 +73,7 @@ public class UrlShortenerService {
     public List<GetStatsResponse> getAllUserRedirections(long userId) {
         return repo.findAllByUserId(userId).stream().map(redirection -> new GetStatsResponse(
                 redirection.getId(),
+                redirection.getShortKey(),
                 redirection.getCreationDate().toInstant().toString(),
                 redirection.getUsageCount()
         )).toList();
