@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,9 +22,10 @@ public class UserRepo {
     @Value("${application.db-service.host}/user")
     private String url;
 
-    public void save(User user) {
+    public User save(User user) {
         var response = restTemplate.postForEntity(url, user, User.class);
         user.setId(Objects.requireNonNull(response.getBody()).getId());
+        return user;
     }
 
     public Optional<User> findByUsername(String username) {

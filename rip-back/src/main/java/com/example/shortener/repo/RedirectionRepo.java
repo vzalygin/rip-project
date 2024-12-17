@@ -18,11 +18,12 @@ public class RedirectionRepo {
     @Value("${application.db-service.host}/redirection")
     private String url;
 
-    public void save(Redirection redirection) {
+    public Redirection save(Redirection redirection) {
         var response = restTemplate.postForEntity(url, redirection, Redirection.class);
         redirection.setId(
                 Objects.requireNonNull(response.getBody()).getId()
         );
+        return redirection;
     }
 
     public void delete(long id, long userId) {

@@ -19,7 +19,7 @@ import java.util.List;
 public class RedirectController {
     private final UrlShortenerService shortener;
 
-    @PostMapping("/")
+    @PostMapping("")
     @Operation(summary = "Создание перенаправления", security = { @SecurityRequirement(name = "bearer-key") })
     public CreateRedirectResponse createRedirect(
             @RequestBody CreateRedirectRequest request,

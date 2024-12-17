@@ -17,4 +17,10 @@ public class User {
         this.username = username;
         this.id = null;
     }
+
+    public User(long id, String username, String passwordHash) {
+        this.passwordHash = passwordHash;
+        this.username = username;
+        this.id = id;
+    }
 }

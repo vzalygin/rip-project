@@ -45,13 +45,14 @@ public class UrlShortenerService {
 
     public Redirection resolve(String shortKey) throws RedirectionNotFoundException {
         Optional<Redirection> redirectionO = repo.findByShortKey(shortKey);
-        if (redirectionO.isPresent()) {
-            var redirection = redirectionO.get();
-            redirection.incrementUsageCount();
-            repo.save(redirection);
-            return redirection;
+
+        if (redirectionO.isEmpty()) {
+            throw new RedirectionNotFoundException(shortKey);
         }
-        throw new RedirectionNotFoundException(shortKey);
+
+        var redirection = redirectionO.get();
+        redirection.incrementUsageCount();
+        return repo.save(redirection);
     }
 
     public void deleteRedirection(long id, long userId) {
